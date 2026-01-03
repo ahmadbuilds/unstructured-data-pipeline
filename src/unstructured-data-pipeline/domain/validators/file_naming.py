@@ -10,12 +10,12 @@ def validate_file_type(path:str)->bool:
     if chunks[-1]==FILE_TYPES and len(chunks)!=1:
         return True
     else:
-        print("only .txt files are supported")
+        print(f'only .txt files are supported:{path}')
         return False
     
 def validate_file_existence(path:str)->bool:
     if os.path.isfile(path):
         return True
     else:
-        print("file does not exist. Invalid Path!")
+        print(f'file does not exist. Invalid Path:{path}')
         return False

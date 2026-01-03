@@ -1,6 +1,5 @@
 import os 
 from config import FILE_TYPES
-from typing import AnyStr
 
 def validate_empty_path(path:str)->bool:
     if len(path)==0:

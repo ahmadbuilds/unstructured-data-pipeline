@@ -1,11 +1,12 @@
 import os 
 from config import FILE_TYPES
+from typing import AnyStr
 
-def validate_empty_path(path):
+def validate_empty_path(path:str)->bool:
     if len(path)==0:
         return False
     
-def validate_file_type(path):
+def validate_file_type(path:str)->bool:
     chunks=path.split(".")
     if chunks[-1]==FILE_TYPES and len(chunks)!=1:
         return True
@@ -13,7 +14,7 @@ def validate_file_type(path):
         print("only .txt files are supported")
         return False
     
-def validate_file_existence(path):
+def validate_file_existence(path:str)->bool:
     if os.path.isfile(path):
         return True
     else:

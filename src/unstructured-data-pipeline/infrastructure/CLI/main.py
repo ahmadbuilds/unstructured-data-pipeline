@@ -8,12 +8,7 @@ files=set()
 files_content=set()
 def Thread_Validation_Function(path:str):
     #validating the file paths
-    valid_path=True
-    for y in [validate_empty_path(path) & validate_file_type(path) & validate_file_existence(path)]:
-        if y==False:
-            valid_path=False
-            break
-    if valid_path:
+    if validate_empty_path(path) and validate_file_type(path) and validate_file_existence(path):
         files.add(path)
 
 def Thread_File_Reader(path:str):

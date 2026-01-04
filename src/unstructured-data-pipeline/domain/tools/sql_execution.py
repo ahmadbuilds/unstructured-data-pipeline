@@ -4,13 +4,18 @@ from config import GENERATED_SCHEMA_PATH
 
 @tool
 def manipulating_DBTable(query:str)->str:
-    "Creating new Tables and for Inserting and updating new Data into the Table"
+    """
+    Executes SQL statements to create tables, insert, or update data.
+    Returns a success/failure message.
+    """
     try:
         connection_object=sqlite3.connect(GENERATED_SCHEMA_PATH)
         cur=connection_object.cursor()
-        res=cur.execute(query)
-        return str(res.fetchall())
-    except:
-        return "Failed to create the Database table"
+        
+        with connection_object:
+            cur.executescript(query)
+        return  "SQL executed successfully"
+    except sqlite3.Error as e:
+        return f"Failed to execute query:{e}"
     finally:
         connection_object.close()

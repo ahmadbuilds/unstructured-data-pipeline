@@ -1,8 +1,7 @@
 from pydantic import BaseModel,Field
 import datetime
-from typing_extensions import TypedDict
 from typing import List
-class ItemDetails(TypedDict):
+class ItemDetails(BaseModel):
     Description:str=Field("Details about the Item")
     Quantity:str=Field("How much the item is required by the user")
     Unit_price:int=Field("Price of one item")

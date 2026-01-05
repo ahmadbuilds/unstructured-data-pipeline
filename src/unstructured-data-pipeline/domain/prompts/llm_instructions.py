@@ -1,9 +1,8 @@
 from langchain.messages import SystemMessage
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate,SystemMessagePromptTemplate
 from config import GENERATED_SCHEMA_PATH
 
-template = ChatPromptTemplate.from_messages([
-    SystemMessage(
+template =SystemMessagePromptTemplate.from_template(
         "You are an expert data engineer. "
         "Your task is to generate valid SQLite SQL statements to create and populate tables. "
         "Follow these instructions carefully:\n\n"
@@ -32,8 +31,4 @@ template = ChatPromptTemplate.from_messages([
         "- Return only valid, executable SQLite SQL statements.\n"
         "- Do not include explanations, comments, markdown, or any other text.\n"
         "- Do not add extra columns, tables, or modify the provided schemas.\n"
-    )
-])
-
-
-
+)

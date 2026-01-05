@@ -3,8 +3,8 @@ from domain.schema.invoice import Invoice,ItemDetails
 from domain.schema.llm_output import response_output
 from domain.tools.file_creation import db_file_creation,check_DBfile_existence
 from domain.tools.sql_execution import manipulating_DBTable
-from infrastructure.llm_providers.llama_provider import create_ollama_instance
-from langchain.agents import create_react_agent
+from infrastructure.llm_providers.gemini_provider import create_gemini_instance
+from langchain.agents import create_agent
 from langchain.agents.structured_output import ToolStrategy
 from langgraph.checkpoint.memory import InMemorySaver
 from domain.schema.invoice import Invoice,ItemDetails
@@ -12,12 +12,12 @@ from domain.schema.invoice import Invoice,ItemDetails
 checkPointer=InMemorySaver()
 
 def create_agent_instance():
-    agent=create_react_agent(
-        model=create_ollama_instance(),
-        system_prompt=template,
+    agent=create_agent(
+        model=create_gemini_instance(),
+        system_prompt=template.prompt.template,
         tools=[db_file_creation,check_DBfile_existence,manipulating_DBTable],
         response_format=ToolStrategy(response_output),
-        checkpointer=checkPointer
+        checkpointer=checkPointer,
     )
 
     return agent

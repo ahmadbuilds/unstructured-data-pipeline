@@ -1,11 +1,9 @@
 from application.pipelines.llm_pipeline import create_agent_instance,format_template
 from infrastructure.CLI.main import read_files
-from domain.schema.invoice import Invoice,ItemDetails
 from config import COMMAND
-
+from domain.prompts.human_instructions import human_template
 react_agent=create_agent_instance()
-invoice_schema=Invoice()
-ItemDetails_schema=ItemDetails()
+
 
 print("=====Welcome to Unstructured Data Pipeline======")
 print("for help type Commands")
@@ -18,29 +16,44 @@ while(True):
     elif command.strip()=="Exit":
         break
     else:
-        chunks=command.strip().split(" ")
+        command_str = command.strip()
         
-        if len(chunks) < 4:
-            print("Invalid command format. Expected: process <input_path> --db <output_db_path>")
-            continue
-        
-        if chunks[0].lower() != "process":
+        if not command_str.lower().startswith("process"):
             print("Invalid command. First argument must be 'process'")
             continue
         
-        if "--db" not in chunks:
+        if "--db" not in command_str:
             print("Invalid command format. Missing '--db' flag")
             continue
         
         try:
-            input_path = chunks[1]
+            parts = command_str.split("--db")
             
-            # Find --db flag and get output database path
-            db_index = chunks.index("--db")
-            if db_index + 1 >= len(chunks):
-                output_db_path=None
+            if len(parts) != 2:
+                print("Invalid command format. Expected: process <input_path> --db <output_db_path>")
+                continue
+            
+            input_part = parts[0].strip()
+            if input_part.lower().startswith("process"):
+                input_path = input_part[7:].strip()  
             else:
-                output_db_path = chunks[db_index + 1]
+                print("Invalid command format.")
+                continue
+            
+            # Extract output database path
+            output_db_path = parts[1].strip() if parts[1].strip() else None
+            
+            if not input_path:
+                print("Invalid command format. Input path is required.")
+                continue
+            
+            # Strip quotes if present
+            input_path = input_path.strip('"').strip("'")
+            if output_db_path:
+                output_db_path = output_db_path.strip('"').strip("'")
+            
+            print(f"Input path: {input_path}")
+            print(f"Output DB path: {output_db_path}")
             
             # Read and validate files
             file_contents = read_files([input_path] if type(input_path) == str else input_path)
@@ -50,12 +63,15 @@ while(True):
                 
                 for content in file_contents:
                     print("\nProcessing file content...")
-                    
-                    formatted_template=format_template(
-                        invoice_schema,ItemDetails_schema,content,output_db_path
+
+                    formatted_template=human_template.format(
+                        content=content,
+                        output_db_path=output_db_path,
                     )
+            
                     response = react_agent.invoke(
-                        {"input":formatted_template}
+                        {"messages":formatted_template},
+                        config={"configurable": {"thread_id": "1"}}
                     )
                     
                     print("Processing complete.")

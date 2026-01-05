@@ -4,6 +4,7 @@ from config import FILE_TYPES
 def validate_empty_path(path:str)->bool:
     if len(path)==0:
         return False
+    return True
     
 def validate_file_type(path:str)->bool:
     chunks=path.split(".")

@@ -4,23 +4,23 @@ from config import GENERATED_SCHEMA_PATH
 
 
 @tool
-def check_DBfile_existence()->bool:
+def check_DBfile_existence(path:str=GENERATED_SCHEMA_PATH)->bool:
     """
     Check if the file exist or not
     return Exists/Missing
     """
-    if os.path.isfile(GENERATED_SCHEMA_PATH):
+    if os.path.isfile(path):
         return True
     return False
 
 @tool
-def db_file_creation()->str:
+def db_file_creation(path:str=GENERATED_SCHEMA_PATH)->str:
     """
     Create a new Database file
     Returns Success/Failure
     """
     try:
-        with open(GENERATED_SCHEMA_PATH,"w") as file:
+        with open(path,"w") as file:
             return "Database File Created Successfully"
     except:
         return "Failed to create database file"

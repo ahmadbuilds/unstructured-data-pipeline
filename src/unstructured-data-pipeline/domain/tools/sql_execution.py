@@ -3,7 +3,7 @@ import sqlite3
 from config import GENERATED_SCHEMA_PATH
 
 @tool
-def manipulating_DBTable(query:str)->str:
+def manipulating_DBTable(query:str,path:str=GENERATED_SCHEMA_PATH)->str:
     """
     Executes SQL statements to create tables, insert, or update data.
     Returns a success/failure message.
@@ -12,7 +12,7 @@ def manipulating_DBTable(query:str)->str:
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            connection_object = sqlite3.connect(GENERATED_SCHEMA_PATH)
+            connection_object = sqlite3.connect(path)
             cur = connection_object.cursor()
             with connection_object:
                 cur.executescript(query)

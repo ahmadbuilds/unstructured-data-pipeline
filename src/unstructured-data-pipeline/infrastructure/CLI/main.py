@@ -22,7 +22,7 @@ def Thread_File_Reader(path:str):
     finally:
         file.close()
 
-def read_files(file_paths:list)->Set[str]:
+def read_files(file_paths:list[str])->Set[str]:
     #Splitting the Files Reading into Worker Threads
     with ThreadPoolExecutor(max_workers=OPTIMAL_NUMBER_THREADS) as e:
         for path in file_paths:

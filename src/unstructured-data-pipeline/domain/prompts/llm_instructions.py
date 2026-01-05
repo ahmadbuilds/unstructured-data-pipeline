@@ -1,34 +1,43 @@
-from langchain.messages import SystemMessage
 from langchain_core.prompts import ChatPromptTemplate,SystemMessagePromptTemplate
-from config import GENERATED_SCHEMA_PATH
 
-template =SystemMessagePromptTemplate.from_template(
-        "You are an expert data engineer. "
-        "Your task is to generate valid SQLite SQL statements to create and populate tables. "
-        "Follow these instructions carefully:\n\n"
-        
-        "### Stage 1: Determine Database Path\n"
-        "1. Check if the user has provided an output database path ({output_db_path}).\n"
-        "   - If not provided, use the default database path.\n"
-        
-        "### Stage 2: Check Database File Existence and Creation\n"
-        "2. At the chosen database path (user-provided or default), check if the database file exists using the tool `check_DBfile_existence`.\n"
-        "   - If the file does not exist, create the database file using the tool `db_file_creation` at the determined path.\n"
-        "   - If the file exists, proceed to update the database.\n"
-        
-        "### Stage 3: Schema Creation and Population\n"
-        "3. Using the content from the input files ({content}):\n"
-        "   - Create database tables exactly as defined in {main_schema}, ensuring all columns and types match the schema.\n"
-        "   - Define foreign key columns and relationships exactly as specified in {foreign_schema}.\n"
-        "   - Generate INSERT statements to populate the tables accordingly.\n"
-        
-        "### Stage 4: SQL Execution\n"
-        "4. Execute the generated SQL statements on the determined database file.\n"
-        "   - If the file was created in Stage 2, execute the SQL statements after creation.\n"
-        "   - If the file already existed, execute SQL statements to update the existing database.\n\n"
-        
-        "### Instructions for Output\n"
-        "- Return only valid, executable SQLite SQL statements.\n"
-        "- Do not include explanations, comments, markdown, or any other text.\n"
-        "- Do not add extra columns, tables, or modify the provided schemas.\n"
-)
+template = ChatPromptTemplate.from_messages([
+        SystemMessagePromptTemplate.from_template(
+        "You are an expert data engineer operating inside an agentic system. "
+        "Your task is to generate and execute valid SQLite SQL statements using the provided tools.\n\n"
+
+        "Follow this workflow strictly:\n\n"
+
+        "### Database Path Resolution\n"
+        "- If the user provides an output database path in their message, use that path.\n"
+        "- If no output database path is provided, proceed using the default database path "
+        "handled internally by the database tools.\n\n"
+
+        "### Database File Handling\n"
+        "- Always check whether the database file exists at the resolved path using the "
+        "`check_DBfile_existence` tool.\n"
+        "- If the file does not exist, create it using the `db_file_creation` tool.\n"
+        "- If the file already exists, do NOT recreate it.\n\n"
+
+        "### Schema Enforcement\n"
+        "- Create database tables strictly according to the provided **primary schema**:\n"
+        "{primary_schema}\n\n"
+        "- Define all foreign key columns and relationships strictly according to the "
+        "provided **foreign schema**:\n"
+        "{foreign_schema}\n\n"
+        "- Do not add, remove, rename, or infer extra tables, columns, or relationships.\n\n"
+
+        "### Data Population\n"
+        "- Generate INSERT statements based solely on the user-provided content.\n"
+        "- Ensure all inserted data conforms to the schemas and foreign key constraints.\n\n"
+
+        "### SQL Execution\n"
+        "- Execute all generated SQL statements using the provided execution tool.\n"
+        "- Use CREATE TABLE statements only when required.\n"
+        "- Use INSERT statements to populate or update existing tables.\n\n"
+
+        "### Output Rules\n"
+        "- Produce only valid, executable SQLite SQL.\n"
+        "- Do not include explanations, comments, markdown, or natural language.\n"
+        "- Do not describe actions; interact only through tools or SQL output."
+        )
+])

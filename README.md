@@ -223,15 +223,3 @@ ItemDetails:
   - Quantity: str
   - Unit_price: int
 ```
-
-## License
-
-[Add your license here]
-
-## Contributing
-
-[Add contribution guidelines here]
-
-## Contact
-
-[Add contact information here]

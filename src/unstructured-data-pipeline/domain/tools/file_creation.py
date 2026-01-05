@@ -2,7 +2,6 @@ from langchain.tools import tool
 import os 
 from config import GENERATED_SCHEMA_PATH
 
-
 @tool
 def check_DBfile_existence(path:str=GENERATED_SCHEMA_PATH)->bool:
     """
@@ -22,7 +21,5 @@ def db_file_creation(path:str=GENERATED_SCHEMA_PATH)->str:
     try:
         with open(path,"w") as file:
             return "Database File Created Successfully"
-    except:
-        return "Failed to create database file"
-    finally:
-        file.close()
+    except Exception as e:
+        return f"Failed to create database file: {e}"
